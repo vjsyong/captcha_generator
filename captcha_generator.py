@@ -1,6 +1,6 @@
 from PIL import ImageFont, ImageDraw, Image  
 import numpy as np
-import random, string, cv2
+import random, string, cv2, os
 
 class Captcha:
 
@@ -56,9 +56,12 @@ class Captcha:
             tailed_chars = "gjpqy"
             if char in tailed_chars:
                 tail_offset = int(offset[1]/2)
-            cv2.rectangle(self.img, (lastwidth+10+offset[0] , self.height-h-13+tail_offset) , (lastwidth+ w+10+offset[0], self.height-11+tail_offset), (0,0,0), 1)
+            lt = (lastwidth+10+offset[0] , self.height-h-13+tail_offset)
+            br = (lastwidth+ w+10+offset[0], self.height-11+tail_offset)
+            print(lt, br)
+            # cv2.rectangle(self.img, lt , br, (0,0,0), 1)
         
-            print(lastwidth)
+            # print(lastwidth)
             self.draw_char(self.img, (10 + lastwidth, -10), random_font, char)
             # self.draw_char(self.img, (lastwidth + w, -10), random_font, char)
             lastwidth += (w-4)
@@ -84,7 +87,11 @@ class Captcha:
         self.draw_frame()
         self.draw_string(self.text)
         self.draw_line(self.img)
-        cv2.imshow("white", self.img)
+        scaled = cv2.resize(self.img, (224, 64) , interpolation = cv2.INTER_AREA)
+        filename = os.path.abspath(os.path.dirname(__file__)) + "\\captchas\\" + self.text + ".jpg"
+        print(filename)
+        cv2.imshow("white", scaled)
+        cv2.imwrite(filename, scaled) 
         cv2.waitKey()
 
 if __name__ == '__main__':
