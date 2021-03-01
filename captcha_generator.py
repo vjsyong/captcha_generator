@@ -1,13 +1,14 @@
 from PIL import ImageFont, ImageDraw, Image  
 import numpy as np
 import random, string, cv2, os
+from pathlib import Path
 
 class Captcha:
 
     font = []
     draw_offset = (10, -10)
 
-    def __init__(self, width, height, text):
+    def __init__(self, width, height, text, mode):
         self.width = width
         self.height = height
         self.text = self.random_key(5)
@@ -16,6 +17,7 @@ class Captcha:
         self.font.append(ImageFont.truetype("Prima_Sans_Mono_Bold_BT.ttf", 45))
         self.font.append(ImageFont.truetype("PrimaSansMonoBT-BoldOblique.otf", 45))
         self.font.append(ImageFont.truetype("PrimaSansBT-Oblique.otf", 45))
+        self.mode = "train"
         
         
 
@@ -100,9 +102,17 @@ class Captcha:
         return key
     
     def generate(self):
+
+        
         filename = os.path.abspath(os.path.dirname(__file__)) + "/captchas" 
-        filename_jpg = filename + "/images/" + self.text + ".jpg"
-        filename_txt = filename + "/labels/" + self.text + ".txt"
+        Path(filename).mkdir(parents=True, exist_ok=True)
+        Path(filename + "/images/train").mkdir(parents=True, exist_ok=True)
+        Path(filename + "/labels/train").mkdir(parents=True, exist_ok=True)
+        Path(filename + "/images/valid").mkdir(parents=True, exist_ok=True)
+        Path(filename + "/labels/valid").mkdir(parents=True, exist_ok=True)
+        
+        filename_jpg = filename + "/images/" + self.mode + "/" + self.text + ".jpg"
+        filename_txt = filename + "/labels/" + self.mode + "/" + self.text + ".txt"
         text_file = open(filename_txt,"w+")
         self.draw_frame()
         self.draw_string(self.text, text_file)
@@ -112,8 +122,12 @@ class Captcha:
         cv2.imwrite(filename_jpg, scaled) 
         # cv2.waitKey()
 
-if __name__ == '__main__':
-    # text = "66nb2"  
-    for i in range(2000):
-        c = Captcha(175, 50, "")
+if __name__ == '__main__': 
+    for i in range(10):
+        c = Captcha(175, 50, "", "train")
+        c.generate()
+    
+    for i in range(10):
+        c = Captcha(175, 50, "", "valid")
+        c.mode = "valid"
         c.generate()
