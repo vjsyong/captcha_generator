@@ -39,8 +39,9 @@ class Captcha:
         (width, baseline), (offset_x, offset_y) = font.font.getsize(char)
         tailed_chars = "gjpqy"
         compact_chars = "aceimnorsuvwxz"
-        standard_chars = "bdfhklt0123456789ABCDEFGHIKLMNOPRSTUVWXYZ"
-        tall_chars = "JQ"
+        # standard_chars = "bdfhklt0123456789ABCDEFGHIKLMNOPRSTUVWXYZ"
+        standard_chars = "bdfhklt0123456789"
+        # tall_chars = "JQ"
         if char in tailed_chars:
             return (w, ascent - offset_y + descent)
         elif char in compact_chars:
@@ -52,7 +53,8 @@ class Captcha:
 
     def draw_string(self, text, text_file):
         lastwidth = 0 # Position to draw next char
-        char_list = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        # char_list = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        char_list = "0123456789abcdefghijklmnopqrstuvwxyz"
         for i,char in enumerate(text):
             rand = random.randint(0, 3)
             random_font = self.font[rand]
@@ -98,7 +100,8 @@ class Captcha:
     def random_key(self, length):
         key = ''
         for i in range(length):
-            key += random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits)
+            # key += random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits)
+            key += random.choice(string.ascii_lowercase + string.digits)
         return key
     
     def generate(self):
